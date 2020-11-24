@@ -1,0 +1,11 @@
+/.vscode/
+/.git/
+/node_modules/
+/tools/
+/.gitignore
+/.npmignore
+/tsconfig.json
+/docs/
+/.eslintrc
+/.eslintignore
+/commitlint.config.js

@@ -1,0 +1,51 @@
+{
+  "name": "@litert/exception",
+  "version": "1.0.0",
+  "description": "The exceptions implement of LiteRT.",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run rebuild",
+    "build": "echo Using TypeScript && tsc -v && tsc -p .",
+    "build-watch": "echo Using TypeScript && tsc -v && tsc -w -p .",
+    "rebuild": "npm run clean && npm run lint && npm run build",
+    "test": "echo See directory src/examples",
+    "clean": "rm -rf lib examples",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint --ext ts src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litert/exception.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litert/exception.js/issues"
+  },
+  "homepage": "https://github.com/litert/exception.js#readme",
+  "keywords": [
+    "litert",
+    "lrt",
+    "exception",
+    "error"
+  ],
+  "author": "Angus.Fenying <fenying@litert.org> (https://fenying.net)",
+  "license": "Apache-2.0",
+  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/node": "^14.11.1",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "eslint": "^7.14.0",
+    "husky": "^4.3.0",
+    "typescript": "^4.1.2"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run lint && npm run typecheck"
+    }
+  },
+  "dependencies": {}
+}
