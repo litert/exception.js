@@ -9,3 +9,4 @@
 /.eslintrc
 /.eslintignore
 /commitlint.config.js
+/.husky/
