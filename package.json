@@ -1,6 +1,6 @@
 {
   "name": "@litert/exception",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The exceptions implement of LiteRT.",
   "main": "lib/index.js",
   "scripts": {
@@ -32,20 +32,13 @@
   "typings": "lib/index.d.ts",
   "types": "lib/index.d.ts",
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
-    "@types/node": "^14.11.1",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.8.1",
-    "eslint": "^7.14.0",
-    "husky": "^4.3.0",
-    "typescript": "^4.1.2"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "npm run lint && npm run typecheck"
-    }
-  },
-  "dependencies": {}
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
+    "@types/node": "^15.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.25.0",
+    "husky": "^6.0.0",
+    "typescript": "^4.2.4"
+  }
 }

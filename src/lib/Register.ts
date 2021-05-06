@@ -194,7 +194,7 @@ class ExceptionRegistry implements C.IRegistry {
             );
         }
 
-        const ctor = class extends BaseException implements C.IException { };
+        const ctor = (new Function('BaseException', `class ${opts.name} extends BaseException { } return ${opts.name};`))(BaseException);
 
         Object.defineProperties(ctor, {
 
@@ -262,7 +262,7 @@ class ExceptionRegistry implements C.IRegistry {
         this._exceptionsNameIndex[opts.name] = ctor;
         this._exceptionsCodeIndex[code] = ctor;
 
-        return ctor as any;
+        return ctor;
     }
 
     public identify(e: unknown, type?: string, name?: string): e is C.IException {

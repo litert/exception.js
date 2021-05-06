@@ -18,7 +18,7 @@
 import * as $Exceptions from '../lib';
 
 const registry = $Exceptions.createExceptionRegistry({
-    module: 'test.litert.org',
+    module: 'exception.litert.org',
     types: {
         'private': {
             index: $Exceptions.createDecreaseCodeIndex(-1)
