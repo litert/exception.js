@@ -29,6 +29,18 @@ const registry = $Exceptions.createExceptionRegistry({
     }
 });
 
+const registry2 = $Exceptions.createExceptionRegistry({
+    module: 'exception2.litert.org',
+    types: {
+        'private': {
+            index: $Exceptions.createDecreaseCodeIndex(-1)
+        },
+        'public': {
+            index: $Exceptions.createIncreaseCodeIndex(1)
+        }
+    }
+});
+
 const E_NO_USER = registry.register({
     type: 'public',
     name: 'no_user',
@@ -50,13 +62,13 @@ const noUserErr = new E_NO_USER();
 console.error('Exception URI:      ', synErr.toString());
 console.error('Exception URI:      ', noUserErr.toString());
 
-console.error('Exception name:     ', registry.parse(noUserErr.toString())?.name);
-console.error('Exception message:  ', noUserErr.message);
+console.info('Exception name:     ', registry.parse(noUserErr.toString())?.name);
+console.info('Exception message:  ', noUserErr.message);
 console.error('Exception stack:    ', registry.parse(noUserErr.toString())?.stack);
 
 if (registry.identify(noUserErr, 'public', 'no_user')) {
 
-    console.error('It is a NO_USER exception.');
+    console.info('It is a NO_USER exception.');
 }
 
 try {
@@ -72,13 +84,36 @@ catch (e) {
 
     if ($Exceptions.identify(e, $Exceptions.E_TYPE_NOT_FOUND.type, $Exceptions.E_TYPE_NOT_FOUND.name)) {
 
-        console.error('MATCHED(identify): E_TYPE_NOT_FOUND');
+        console.info('MATCHED(identify): E_TYPE_NOT_FOUND');
     }
 
     if ($Exceptions.equals(e, $Exceptions.E_TYPE_NOT_FOUND)) {
 
-        console.error('MATCHED(equals): E_TYPE_NOT_FOUND');
+        console.info('MATCHED(equals): E_TYPE_NOT_FOUND');
     }
 
     console.error('Exception URI:    ', e.toString());
 }
+
+if (registry.has('no_user')) {
+
+    console.info('Exception "no_user" has been defined.');
+
+    registry2.register({
+        type: 'public',
+        name: 'no_user',
+        message: 'No such a user.',
+        metadata: {}
+    });
+
+    console.info('Successfully defined the exception "no_user" in another registry.');
+}
+
+console.info(JSON.stringify(registry.getDefinitions(), null, 2));
+
+registry.register({
+    type: 'public',
+    name: 'no_user',
+    message: 'No such a user.',
+    metadata: {}
+});

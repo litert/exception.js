@@ -167,4 +167,25 @@ export interface IRegistry {
      * @param e     The exception URI.
      */
     parse(e: string): IException | null;
+
+    /**
+     * Detect whether an exception exists by code or name.
+     *
+     * @param identity  The code or name of exception.
+     */
+    has(identity: number | string): boolean;
+
+    /**
+     * Get the constructor of a determined exception by code or name.
+     *
+     * Returns `null` if no such exception of determined identity.
+     *
+     * @param identity  The code or name of exception.
+     */
+    get(identity: number | string): IExceptionConstructor | null;
+
+    /**
+     * Get definition list of all exceptions registered in this registry.
+     */
+    getDefinitions(): IExceptionDefinition[];
 }

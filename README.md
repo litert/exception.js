@@ -1,5 +1,6 @@
 # LiteRT/Exception
 
+[![Strict TypeScript Checked](https://badgen.net/badge/TS/Strict "Strict TypeScript Checked")](https://www.typescriptlang.org)
 [![npm version](https://img.shields.io/npm/v/@litert/exception.svg?colorB=brightgreen)](https://www.npmjs.com/package/@litert/exception "Stable Version")
 [![License](https://img.shields.io/npm/l/@litert/exception.svg?maxAge=2592000?style=plastic)](https://github.com/litert/exception/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/litert/exception.js.svg)](https://github.com/litert/exception.js/issues)

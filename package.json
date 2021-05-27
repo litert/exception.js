@@ -1,6 +1,6 @@
 {
   "name": "@litert/exception",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "description": "The exceptions implement of LiteRT.",
   "main": "lib/index.js",
   "scripts": {

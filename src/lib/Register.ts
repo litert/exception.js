@@ -110,13 +110,13 @@ class BaseException implements C.IException {
 
 class ExceptionRegistry implements C.IRegistry {
 
-    private '_types': Record<string, IExceptionType> = {};
+    private _types: Record<string, IExceptionType> = {};
 
-    private '_module': string;
+    private _module: string;
 
-    private '_exceptionsCodeIndex': Record<number, typeof BaseException> = {};
+    private _codeIndex: Record<number, typeof BaseException> = {};
 
-    private '_exceptionsNameIndex': Record<string, typeof BaseException> = {};
+    private _nameIndex: Record<string, typeof BaseException> = {};
 
     public constructor(opts: C.IRegistryOptions) {
 
@@ -153,10 +153,20 @@ class ExceptionRegistry implements C.IRegistry {
         origin?: any,
     ): C.IException {
 
-        const ctor = this._exceptionsNameIndex[name.toLowerCase()];
+        const ctor = this._nameIndex[name.toLowerCase()];
 
         // eslint-disable-next-line @typescript-eslint/unbound-method
         return new ctor(metadata, origin, this.raiseError as any);
+    }
+
+    public has(id: number | string): boolean {
+
+        return !!(typeof id === 'string' ? this._nameIndex[id] : this._codeIndex[id as any]);
+    }
+
+    public get(id: number | string): C.IExceptionConstructor | null {
+
+        return (typeof id === 'string' ? this._nameIndex[id] : this._codeIndex[id as any]) as C.IExceptionConstructor ?? null;
     }
 
     public register(opts: C.IExceptionRegistration): C.IExceptionConstructor {
@@ -178,7 +188,7 @@ class ExceptionRegistry implements C.IRegistry {
 
         const code = opts.code ?? this._types[opts.type].indexFn();
 
-        if (this._exceptionsNameIndex[opts.name]) {
+        if (this._nameIndex[opts.name]) {
 
             throw _reg().raiseError(
                 BUILT_IN_ERR_DUP_EXCEPTION_NAME,
@@ -186,7 +196,7 @@ class ExceptionRegistry implements C.IRegistry {
             );
         }
 
-        if (this._exceptionsCodeIndex[code]) {
+        if (this._codeIndex[code]) {
 
             throw _reg().raiseError(
                 BUILT_IN_ERR_DUP_EXCEPTION_NAME,
@@ -259,8 +269,8 @@ class ExceptionRegistry implements C.IRegistry {
             }
         });
 
-        this._exceptionsNameIndex[opts.name] = ctor;
-        this._exceptionsCodeIndex[code] = ctor;
+        this._nameIndex[opts.name] = ctor;
+        this._codeIndex[code] = ctor;
 
         return ctor;
     }
@@ -297,9 +307,9 @@ class ExceptionRegistry implements C.IRegistry {
                 return null;
             }
 
-            if (this._exceptionsNameIndex[eName] && url.hostname === this._module) {
+            if (this._nameIndex[eName] && url.hostname === this._module) {
 
-                return new this._exceptionsNameIndex[eName](
+                return new this._nameIndex[eName](
                     JSON.parse(url.searchParams.get('meta')!),
                     JSON.parse(url.searchParams.get('origin')!),
                     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -322,6 +332,18 @@ class ExceptionRegistry implements C.IRegistry {
 
             return null;
         }
+    }
+
+    public getDefinitions(): C.IExceptionDefinition[] {
+
+        return Object.values(this._codeIndex as Record<string, C.IExceptionConstructor>).map((v) => ({
+            'name': v.name,
+            'code': v.code,
+            'module': v.module,
+            'message': v.message,
+            'type': v.type,
+            'metadata': { ...v.metadata }
+        }));
     }
 }
 
@@ -413,7 +435,7 @@ export function createExceptionRegistry(opts: C.IRegistryOptions): C.IRegistry {
 }
 
 /**
- * Helper function that identifies whether a value is a exception object.
+ * Helper function that identifies whether a value is a determined exception object.
  * @param e         The value to be identified.
  * @param type      The expected exception type, optional.
  * @param name      The expected exception name, optional.
@@ -429,7 +451,7 @@ export function identify(e: unknown, type?: string, name?: string, module?: stri
 }
 
 /**
- * Helper function that identifies whether a value is a exception object.
+ * Helper function that identifies whether a value is a determined exception object.
  * @param e             The value to be identified.
  * @param exceptionCtor The constructor of expected exception.
  */
