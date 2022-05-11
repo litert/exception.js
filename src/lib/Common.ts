@@ -55,33 +55,32 @@ export interface IExceptionRawData extends IExceptionDefinition {
     /**
      * The stack where the exception is thrown.
      */
-    'stack': string;
+    'stack'?: string;
 
     /**
      * The origin exception info.
      */
-    'origin': any;
+    'origin'?: any;
 }
 
 export interface IException extends Readonly<IExceptionRawData> {
 
     /**
      * Format the exception to URI string.
+     *
+     * @param {boolean} dataOnly  Ignore origin and stack info [default: false].
      */
-    toString(): string;
+    toString(dataOnly?: boolean): string;
 
     /**
      * Get the raw data of an exception object.
+     *
+     * @param {boolean} dataOnly  Ignore origin and stack info [default: false].
      */
-    toJSON(): IExceptionRawData;
+    toJSON(dataOnly?: boolean): IExceptionRawData;
 }
 
 export interface IExceptionConstructor extends Readonly<IExceptionDefinition> {
-
-    /**
-     * Format the definition of the exception to URI string.
-     */
-    toString(): string;
 
     new (meta?: Record<string, any>, origin?: any): IException;
 }
@@ -167,6 +166,13 @@ export interface IRegistry {
      * @param e     The exception URI.
      */
     parse(e: string): IException | null;
+
+    /**
+     * Convert the raw JSON data into an exception object.
+     *
+     * @param e     The data from `toJSON` method.
+     */
+    fromJSON(e: IExceptionRawData): IException;
 
     /**
      * Detect whether an exception exists by code or name.

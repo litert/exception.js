@@ -1,5 +1,11 @@
 # Changes Logs
 
+## v1.1.5
+
+- feat(exception): allow `toJSON` without stack and origin.
+- feat(exception): added `fromJSON` to parse data from `toJSON`.
+- feat(exception): stringify exception to a short URL if needed.
+
 ## v1.1.1
 
 - feat(registry): added registry methods

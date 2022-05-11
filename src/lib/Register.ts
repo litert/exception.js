@@ -76,9 +76,20 @@ class BaseException implements C.IException {
         }
     }
 
-    public toString(): string {
+    public toString(onlyData: boolean = false): string {
 
-        let ret = `${URL_PROTOCOL}//${this.module}/${this.type}/${this.name}?code=${
+        if (onlyData) {
+
+            return `${URL_PROTOCOL}//${this.module}/${this.type}/${this.name}?code=${
+                this.code
+            }&msg=${
+                encodeURIComponent(this.message)
+            }&meta=${
+                encodeURIComponent(JSON.stringify(this.metadata))
+            }`;
+        }
+
+        return `${URL_PROTOCOL}//${this.module}/${this.type}/${this.name}?code=${
             this.code
         }&msg=${
             encodeURIComponent(this.message)
@@ -89,18 +100,16 @@ class BaseException implements C.IException {
         }&origin=${
             encodeURIComponent(JSON.stringify(this.origin ?? null))
         }`;
-
-        return ret;
     }
 
-    public toJSON(): C.IExceptionRawData {
+    public toJSON(onlyData: boolean = false): C.IExceptionRawData {
 
         return {
             code: this.code,
             name: this.name,
             message: this.message,
-            stack: this.stack,
-            origin: this.origin,
+            stack: onlyData ? undefined : this.stack,
+            origin: onlyData ? undefined : this.origin,
             metadata: this.metadata,
             module: this.module,
             type: this.type,
@@ -110,9 +119,9 @@ class BaseException implements C.IException {
 
 class ExceptionRegistry implements C.IRegistry {
 
-    private _types: Record<string, IExceptionType> = {};
+    private readonly _types: Record<string, IExceptionType> = {};
 
-    private _module: string;
+    private readonly _module: string;
 
     private _codeIndex: Record<number, typeof BaseException> = {};
 
@@ -299,9 +308,7 @@ class ExceptionRegistry implements C.IRegistry {
             if (
                 !url.searchParams?.has('code')
                 || !url.searchParams?.has('msg')
-                || !url.searchParams?.has('stack')
                 || !url.searchParams?.has('meta')
-                || !url.searchParams?.has('origin')
             ) {
 
                 return null;
@@ -311,15 +318,17 @@ class ExceptionRegistry implements C.IRegistry {
 
                 return new this._nameIndex[eName](
                     JSON.parse(url.searchParams.get('meta')!),
-                    JSON.parse(url.searchParams.get('origin')!),
-                    // eslint-disable-next-line @typescript-eslint/unbound-method
-                    url.searchParams.get('stack')!
+                    url.searchParams.has('origin') ? JSON.parse(url.searchParams.get('origin')!) : null,
+                    url.searchParams.get('stack') ?? ''
                 );
             }
 
-            let ret = new BaseException(JSON.parse(url.searchParams.get('meta')!), JSON.parse(url.searchParams.get('origin')!));
+            const ret = new BaseException(
+                JSON.parse(url.searchParams.get('meta')!),
+                url.searchParams.has('origin') ? JSON.parse(url.searchParams.get('origin')!) : null,
+            );
 
-            ret.stack = url.searchParams.get('stack')!;
+            ret.stack = url.searchParams.get('stack') ?? '';
             ret.message = url.searchParams.get('msg')!;
             ret.module = url.hostname;
             ret.type = type;
@@ -332,6 +341,32 @@ class ExceptionRegistry implements C.IRegistry {
 
             return null;
         }
+    }
+
+    public fromJSON(j: C.IExceptionRawData): C.IException {
+
+        if (this._nameIndex[j.name] && j.module === this._module) {
+
+            return new this._nameIndex[j.name](
+                j.metadata,
+                j.origin,
+                j.stack ?? ''
+            );
+        }
+
+        const ret = new BaseException(
+            j.metadata,
+            j.origin,
+        );
+
+        ret.stack = j.stack ?? '';
+        ret.message = j.message;
+        ret.module = j.module;
+        ret.type = j.type;
+        ret.name = j.name;
+        ret.code = j.code;
+
+        return ret;
     }
 
     public getDefinitions(): C.IExceptionDefinition[] {

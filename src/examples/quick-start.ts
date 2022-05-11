@@ -60,9 +60,27 @@ const synErr = new E_SYNTAX_ERROR();
 const noUserErr = new E_NO_USER();
 
 console.error('Exception URI:      ', synErr.toString());
-console.error('Exception URI:      ', noUserErr.toString());
+console.error('Exception URI:      ', noUserErr.toString(true));
 
-console.info('Exception name:     ', registry.parse(noUserErr.toString())?.name);
+console.info('Exception name:     ', registry.parse(noUserErr.toString(true))?.name);
+console.info('Exception message:  ', registry.parse(noUserErr.toString(true))?.message);
+console.info('Exception module:   ', registry.parse(noUserErr.toString(true))?.module);
+console.info('Exception code:     ', registry.parse(noUserErr.toString(true))?.code);
+
+console.info('Exception name:     ', registry.fromJSON(noUserErr.toJSON(true)).name);
+console.info('Exception message:  ', registry.fromJSON(noUserErr.toJSON(true)).message);
+console.info('Exception module:   ', registry.fromJSON(noUserErr.toJSON(true)).module);
+console.info('Exception code:     ', registry.fromJSON(noUserErr.toJSON(true)).code);
+console.info('Exception stack:    ', registry.fromJSON(noUserErr.toJSON(true)).stack);
+console.info('Exception stack:    ', registry.fromJSON(noUserErr.toJSON()).stack);
+
+console.info('Exception name:     ', registry2.fromJSON(noUserErr.toJSON(true)).name);
+console.info('Exception message:  ', registry2.fromJSON(noUserErr.toJSON(true)).message);
+console.info('Exception module:   ', registry2.fromJSON(noUserErr.toJSON(true)).module);
+console.info('Exception code:     ', registry2.fromJSON(noUserErr.toJSON(true)).code);
+console.info('Exception stack:    ', registry2.fromJSON(noUserErr.toJSON(true)).stack);
+console.info('Exception stack:    ', registry2.fromJSON(noUserErr.toJSON()).stack);
+
 console.info('Exception message:  ', noUserErr.message);
 console.error('Exception stack:    ', registry.parse(noUserErr.toString())?.stack);
 
@@ -92,7 +110,7 @@ catch (e) {
         console.info('MATCHED(equals): E_TYPE_NOT_FOUND');
     }
 
-    console.error('Exception URI:    ', e.toString());
+    console.error('Exception URI:    ', (e as any).toString());
 }
 
 if (registry.has('no_user')) {
