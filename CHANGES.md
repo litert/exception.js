@@ -1,5 +1,10 @@
 # Changes Logs
 
+## v1.2.0
+
+- feat(registry): added `addType` API.
+- feat(registry): added `getTypeNames` API.
+
 ## v1.1.5
 
 - feat(exception): allow `toJSON` without stack and origin.

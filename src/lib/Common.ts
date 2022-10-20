@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Angus.Fenying <fenying@litert.org>
+ * Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,18 +118,20 @@ export interface IExceptionRegistration {
  */
 export type ICodeIndexFn = () => number;
 
+export interface ITypeOptions {
+
+    /**
+     * The exception code indexing function of the new exceptions.
+     */
+    'index': ICodeIndexFn;
+}
+
 export interface IRegistryOptions {
 
     /**
      * Define the valid types of exceptions in the registry.
      */
-    'types': Record<string, {
-
-        /**
-         * The exception code indexing function of the new exceptions.
-         */
-        'index': ICodeIndexFn;
-    }>;
+    'types': Record<string, ITypeOptions>;
 
     /**
      * The name of the module the registry belongs to.
@@ -143,6 +145,18 @@ export interface IRegistry {
      * The name of the module the registry belongs to.
      */
     readonly 'module': string;
+
+    /**
+     * Add a new exception type to the registry.
+     * @param name  The name of the new exception type.
+     * @param opts  The options of the new exception type.
+     */
+    addType(name: string, opts: ITypeOptions): this;
+
+    /**
+     * Get the names of all exception types in the registry.
+     */
+    getTypeNames(): string[];
 
     /**
      * Register the definition of a new exception.

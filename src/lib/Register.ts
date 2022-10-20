@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Angus.Fenying <fenying@litert.org>
+ * Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as C from './Common';
+import type * as C from './Common';
 
 interface IExceptionType {
 
@@ -23,6 +23,7 @@ interface IExceptionType {
 
 const BUILT_IN_TYPE_NAME = 'built_in';
 const BUILT_IN_ERR_TYPE_NOT_FOUND = 'type_not_found';
+const BUILT_IN_ERR_DUP_TYPE = 'dup_type';
 const BUILT_IN_ERR_MALFORMED_TYPE = 'malformed_type';
 const BUILT_IN_ERR_MALFORMED_NAME = 'malformed_name';
 const BUILT_IN_ERR_MALFORMED_MODULE = 'malformed_module';
@@ -138,17 +139,32 @@ class ExceptionRegistry implements C.IRegistry {
 
         for (const t in opts.types) {
 
-            if (!VALIDATE_TYPE.exec(t)) {
-
-                throw _reg().raiseError(BUILT_IN_ERR_MALFORMED_TYPE, { 'type': t });
-            }
-
-            const typ = opts.types[t];
-
-            this._types[t] = {
-                'indexFn': typ.index
-            };
+            this.addType(t, opts.types[t]);
         }
+    }
+
+    public getTypeNames(): string[] {
+
+        return Object.keys(this._types);
+    }
+
+    public addType(name: string, opts: C.ITypeOptions): this {
+
+        if (!VALIDATE_TYPE.exec(name)) {
+
+            throw _reg().raiseError(BUILT_IN_ERR_MALFORMED_TYPE, { 'type': name });
+        }
+
+        if (this._types[name]) {
+
+            throw _reg().raiseError(BUILT_IN_ERR_MALFORMED_TYPE, { 'type': name });
+        }
+
+        this._types[name] = {
+            'indexFn': opts.index
+        };
+
+        return this;
     }
 
     public get module(): string {
@@ -400,6 +416,16 @@ const internalReg = new ExceptionRegistry({
 export const E_TYPE_NOT_FOUND = internalReg.register({
     'name': BUILT_IN_ERR_TYPE_NOT_FOUND,
     'message': 'The type of new exception definition is not defined.',
+    'metadata': {},
+    'type': BUILT_IN_TYPE_NAME
+});
+
+/**
+ * Built-in exception: The type of new exception definition is malformed.
+ */
+export const E_DUP_TYPE = internalReg.register({
+    'name': BUILT_IN_ERR_DUP_TYPE,
+    'message': 'The type of new exception definition already exists.',
     'metadata': {},
     'type': BUILT_IN_TYPE_NAME
 });
